@@ -237,7 +237,7 @@
                 formData.append('username', user);
                 formData.append('password', pass);
 
-                fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData })
+                fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' })
                 .then(response => {
                     alert("회원가입이 완료되어 엑셀에 저장되었습니다 냥!");
                     closeModal();
@@ -255,4 +255,5 @@
         }
     </script>
 </body>
+
 </html>
