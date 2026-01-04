@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>냥냥 (Meow-Meow) - 로그인</title>
+    <style>
+        /* [디자인 테마 설정] */
+        :root {
+            --bg-color: #FFF8E7; /* Light Beige */
+            --primary-pink: #FFB7B2; /* Light Pink */
+            --dark-pink: #FF9E99;
+            --text-color: #5D5D5D;
+            --white: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Gamja Flower', cursive, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* [메인 컨테이너] */
+        .container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 183, 178, 0.4);
+            text-align: center;
+            width: 350px;
+            border: 2px solid var(--primary-pink);
+        }
+
+        /* [상단 아이콘 및 타이틀] */
+        .cat-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-pink);
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 40px;
+        }
+
+        h1 { margin-bottom: 20px; color: var(--dark-pink); font-size: 24px; }
+
+        /* [입력 필드 스타일] */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 14px; margin-bottom: 5px; color: var(--text-color); }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--bg-color);
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary-pink); }
+
+        /* [버튼 스타일] */
+        .btn-container { display: flex; gap: 10px; margin-top: 20px; }
+        
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-login { background-color: var(--primary-pink); color: white; }
+        .btn-login:hover { background-color: var(--dark-pink); }
+
+        .btn-signup { background-color: var(--bg-color); color: var(--text-color); }
+        .btn-signup:hover { background-color: #EFE0C5; }
+
+        /* [팝업 모달 스타일] */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Fade In/Out 애니메이션 */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            width: 320px;
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            border: 3px solid var(--primary-pink);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        /* [캡차 스타일] */
+        .captcha-box {
+            background-color: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: var(--dark-pink);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="cat-icon">🐱</div>
+        <h1>냥냥 (Meow-Meow)</h1>
+        
+        <div class="input-group">
+            <label>이름 (Username)</label>
+            <input type="text" id="loginUser" placeholder="집사 이름 입력">
+        </div>
+        <div class="input-group">
+            <label>암호 (Password)</label>
+            <input type="password" id="loginPass" placeholder="비밀번호 입력">
+        </div>
+
+        <div class="btn-container">
+            <button class="btn-login" onclick="alert('로그인 기능은 서버 연결이 필요합니다!')">Login</button>
+            <button class="btn-signup" onclick="openModal()">Sign up</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-content">
+            <h2>회원가입</h2>
+            <p style="font-size:12px; margin-bottom:15px; color:#888;">냥냥 서비스에 오신 것을 환영합니다!</p>
+
+            <div class="input-group">
+                <label>이름 (Username)</label>
+                <input type="text" id="regUser">
+            </div>
+            <div class="input-group">
+                <label>암호 (Password)</label>
+                <input type="password" id="regPass">
+            </div>
+
+            <div class="captcha-box">
+                로봇 방지: <span id="captchaQ"></span> = ?
+            </div>
+            <div class="input-group">
+                <input type="number" id="captchaInput" placeholder="정답을 입력하세요">
+            </div>
+
+            <div class="btn-container">
+                <button class="btn-login" onclick="submitSignup()">Submit</button>
+                <button class="btn-signup" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // [변수 설정]
+        const modal = document.getElementById('signupModal');
+        let captchaAnswer = 0;
+
+        // [모달 열기 및 캡차 생성]
+        function openModal() {
+            modal.classList.add('active');
+            generateCaptcha();
+        }
+
+        // [모달 닫기]
+        function closeModal() {
+            modal.classList.remove('active');
+            // 입력값 초기화
+            document.getElementById('regUser').value = '';
+            document.getElementById('regPass').value = '';
+            document.getElementById('captchaInput').value = '';
+        }
+
+        // [간단한 숫자 캡차 생성]
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10); // 0~9
+            const num2 = Math.floor(Math.random() * 10); // 0~9
+            captchaAnswer = num1 + num2;
+            document.getElementById('captchaQ').innerText = `${num1} + ${num2}`;
+        }
+
+        // [회원가입 제출 로직]
+        function submitSignup() {
+            const user = document.getElementById('regUser').value;
+            const pass = document.getElementById('regPass').value;
+            const captchaIn = parseInt(document.getElementById('captchaInput').value);
+
+            // 1. 유효성 검사
+            if (!user || !pass) {
+                alert("이름과 암호를 모두 입력해주세요 냥!");
+                return;
+            }
+
+            // 2. 캡차 검사
+            if (captchaIn !== captchaAnswer) {
+                alert("로봇 방지 숫자가 틀렸습니다. 다시 계산해주세요!");
+                return;
+            }
+
+            // 3. 데이터 저장 (Google Sheet로 전송)
+            // 주의: 실제 전송을 위해서는 아래 'GOOGLE_SCRIPT_URL'을 본인의 앱스크립트 주소로 변경해야 합니다.
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBn2fk600GNXb78BEpqTL77l8APHslYZF8ur9vbjYUWWd9-uZG1Bd7Vo6PbcXnYgTa/exec'; 
+
+            if (GOOGLE_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzBn2fk600GNXb78BEpqTL77l8APHslYZF8ur9vbjYUWWd9-uZG1Bd7Vo6PbcXnYgTa/exec') {
+                
+                // 실제 전송 로직 (fetch 사용)
+                const formData = new FormData();
+                formData.append('username', user);
+                formData.append('password', pass);
+
+                fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => {
+                    alert("회원가입이 완료되어 엑셀에 저장되었습니다 냥!");
+                    closeModal();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("저장에 실패했습니다.");
+                });
+            } else {                
+                // 스크립트가 없을 경우의 데모
+                console.log(`[저장됨] 이름: ${user}, 비번: ${pass}`);
+                alert(`환영합니다, ${user}님! \n(데이터가 콘솔에 출력되었습니다. 실제 엑셀 저장은 앱스크립트 설정이 필요합니다.)`);
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
